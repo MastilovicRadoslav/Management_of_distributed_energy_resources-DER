@@ -1,0 +1,25 @@
+ResourceID: 1
+Name: Solar Panel 1
+Power: 25.0
+Status: Inactive
+---
+ResourceID: 2
+Name: Turbine 1
+Power: 55.0
+Status: Active
+---
+ResourceID: 3
+Name: Wind Turbine A
+Power: 40.0
+Status: Inactive
+---
+ResourceID: 4
+Name: Battery Storage 1
+Power: 15.0
+Status: Active
+---
+ResourceID: 5
+Name: Hydro Plant 1
+Power: 100.0
+Status: Inactive
+---
