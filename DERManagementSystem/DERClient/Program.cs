@@ -1,6 +1,5 @@
-﻿using System;
-using DERClient.Services;
-using Common.Models;
+﻿using DERClient.Services;
+using System;
 
 namespace DERClient
 {
@@ -9,27 +8,65 @@ namespace DERClient
         static void Main(string[] args)
         {
             var clientService = new DERClientService();
+            bool validResource = false;
 
-            // Podesi ID resursa za koji želiš da preuzmeš raspored (mora da odgovara ID-ju koji je registrovan kroz UserClient)
-            int resourceId = 1; // Primer ID-a resursa koji je registrovan
+            int resourceId = 0; // Inicijalizacija pre petlje, da izbegnemo CS0165 grešku
 
-            // Preuzimanje rasporeda za resurs
-            var schedule = clientService.GetSchedule(resourceId);
-            if (schedule != null)
+            while (!validResource)
             {
-                Console.WriteLine($"Schedule received: Start - {schedule.StartTime}, End - {schedule.EndTime}");
+                Console.Write("Enter Resource ID: ");
 
-                // Simulacija rada resursa i logovanje proizvodnje
-                double producedEnergy = 15.0; // Primer proizvedene energije u kWh
-                clientService.LogProduction(resourceId, producedEnergy);
+                if (int.TryParse(Console.ReadLine(), out resourceId))
+                {
+                    // Proveri da li resurs postoji i prikaži informacije
+                    if (clientService.ResourceExists(resourceId))
+                    {
+                        if (clientService.DisplayResourceSchedule(resourceId))
+                        {
+                            validResource = true; // Resurs je validan, prekida unos ID-a
+                        }
+                        else
+                        {
+                            Console.WriteLine("Resource has no schedule on the server. Please try again.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Resource with the specified ID does not exist. Please try again.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid numeric ID.");
+                }
             }
-            else
+
+            while (true)
             {
-                Console.WriteLine("No schedule found for this resource.");
-            }
+                Console.WriteLine("\nChoose an option:");
+                Console.WriteLine("1 - Activate resource");
+                Console.WriteLine("2 - Deactivate resource");
+                Console.WriteLine("0 - Exit");
+                Console.Write("Option: ");
+                var option = Console.ReadLine();
 
-            Console.WriteLine("Press any key to exit.");
-            Console.ReadKey();
+                switch (option)
+                {
+                    case "1":
+                        Console.WriteLine(clientService.RegisterResource(resourceId)); // Aktivacija
+                        break;
+                    case "2":
+                        clientService.UnregisterResource(resourceId); // Deaktivacija i prikaz informacija posle deaktivacije
+                        break;
+                    case "0":
+                        Console.WriteLine("Press any key to exit.");
+                        Console.ReadKey();
+                        return;
+                    default:
+                        Console.WriteLine("Invalid option. Please try again.");
+                        break;
+                }
+            }
         }
     }
 }

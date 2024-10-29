@@ -1,36 +1,68 @@
-﻿using System;
+﻿using Common.Interfaces;
+using System;
 using System.ServiceModel;
-using Common.Interfaces;
-using Common.Models;
 
 namespace DERClient.Services
 {
     public class DERClientService
     {
-        private readonly IDERService _client; // WCF klijent za komunikaciju sa DER serverom.
+        private readonly IDERService _client;
 
         public DERClientService()
         {
-            // Konfiguracija WCF klijenta sa NetTcpBinding i adresom endpoint-a.
             var factory = new ChannelFactory<IDERService>(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:8080/DERService"));
-            _client = factory.CreateChannel(); // Kreira kanal za komunikaciju sa serverom.
+            _client = factory.CreateChannel();
         }
 
-        public void RegisterResource(DERResource resource)
+        public bool ResourceExists(int resourceId)
         {
-            _client.RegisterResource(resource); // Poziva server metodu za registraciju resursa.
-            Console.WriteLine($"Resource {resource.Name} registered on the server."); // Prikazuje potvrdu o registraciji resursa.
+            // Provera da li resurs postoji u kolekciji resursa na serveru
+            var resourceInfo = _client.GetResourceStatus().Find(r => r.Id == resourceId);
+            return resourceInfo != null;
         }
 
-        public ResourceSchedule GetSchedule(int resourceId)
+        public bool DisplayResourceSchedule(int resourceId)
         {
-            return _client.GetSchedule(resourceId); // Dohvata raspored za dati ID resursa od servera.
+            // Pribavi informacije o resursu i rasporedu
+            var resourceInfo = _client.GetResourceStatus().Find(r => r.Id == resourceId);
+            var schedule = _client.GetSchedule(resourceId);
+
+            if (resourceInfo != null)
+            {
+                Console.WriteLine("\n--- Resource Information ---");
+                Console.WriteLine($"ID: {resourceInfo.Id}");
+                Console.WriteLine($"Name: {resourceInfo.Name}");
+                Console.WriteLine($"Power: {resourceInfo.Power} kW");
+                Console.WriteLine($"Status: {(resourceInfo.IsActive ? "Active" : "Inactive")}");
+
+                // Prikaži samo ako raspored postoji
+                if (schedule != null)
+                {
+                    Console.WriteLine("\n--- Schedule Information ---");
+                    Console.WriteLine($"Start Time: {schedule.StartTime}");
+                    Console.WriteLine($"End Time: {schedule.EndTime}");
+                    Console.WriteLine($"Active Time: {schedule.ActiveTime} seconds");
+                }
+
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("No information found for the specified resource.");
+                return false;
+            }
         }
 
-        public void LogProduction(int resourceId, double producedEnergy)
+
+        public string RegisterResource(int resourceId)
         {
-            _client.LogProduction(resourceId, producedEnergy); // Beleži proizvedenu energiju za dati ID resursa na serveru.
-            Console.WriteLine($"Logged {producedEnergy} kWh for Resource ID {resourceId}."); // Prikazuje potvrdu o beleženju energije.
+            return _client.RegisterResource(resourceId); // Aktivira resurs
+        }
+
+        public void UnregisterResource(int resourceId)
+        {
+            _client.UnregisterResource(resourceId); // Deaktivira resurs
+            DisplayResourceSchedule(resourceId); // Prikaz informacija nakon deaktivacije
         }
     }
 }
