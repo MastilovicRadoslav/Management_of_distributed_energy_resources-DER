@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Common.Models;
+using System;
 using UserClient.Services;
-using Common.Models;
 
 namespace UserClient
 {
@@ -14,8 +14,7 @@ namespace UserClient
             {
                 Console.WriteLine("\nChoose an option:");
                 Console.WriteLine("1 - Register new resource");
-                Console.WriteLine("2 - Set schedule for a resource");
-                Console.WriteLine("3 - Display resource status");
+                Console.WriteLine("2 - Display resource status");
                 Console.WriteLine("0 - Exit");
                 Console.Write("Option: ");
                 var option = Console.ReadLine();
@@ -26,9 +25,6 @@ namespace UserClient
                         RegisterNewResource(userService);
                         break;
                     case "2":
-                        SetResourceSchedule(userService);
-                        break;
-                    case "3":
                         userService.DisplayResourceStatus();
                         break;
                     case "0":
@@ -42,39 +38,51 @@ namespace UserClient
 
         private static void RegisterNewResource(UserClientService userService)
         {
+            int id;
+            while (true)
+            {
+                Console.Write("Enter Resource ID: ");
+                var idInput = Console.ReadLine();
+
+                if (int.TryParse(idInput, out id))
+                {
+                    break; // Ako je unos validan broj, izlazi iz petlje
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid numeric ID.");
+                }
+            }
+
             Console.Write("Enter Resource Name: ");
             var name = Console.ReadLine();
-            Console.Write("Enter Resource Power (kW): ");
-            var power = double.Parse(Console.ReadLine());
+
+            double power;
+            while (true)
+            {
+                Console.Write("Enter Resource Power (kW): ");
+                var powerInput = Console.ReadLine();
+
+                if (double.TryParse(powerInput, out power))
+                {
+                    break; // Ako je unos validan broj, izlazi iz petlje
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid numeric power value.");
+                }
+            }
 
             var resource = new DERResource
             {
-                Id = new Random().Next(1, 1000),
+                Id = id, // ID koji unosi korisnik
                 Name = name,
                 Power = power,
                 IsActive = false
             };
 
-            userService.RegisterResource(resource);
+            userService.RegisterNewResource(resource);
         }
 
-        private static void SetResourceSchedule(UserClientService userService)
-        {
-            Console.Write("Enter Resource ID: ");
-            var resourceId = int.Parse(Console.ReadLine());
-            Console.Write("Enter Start Time (yyyy-MM-dd HH:mm): ");
-            var startTime = DateTime.Parse(Console.ReadLine());
-            Console.Write("Enter End Time (yyyy-MM-dd HH:mm): ");
-            var endTime = DateTime.Parse(Console.ReadLine());
-
-            var schedule = new ResourceSchedule
-            {
-                ResourceId = resourceId,
-                StartTime = startTime,
-                EndTime = endTime
-            };
-
-            userService.SetSchedule(schedule);
-        }
     }
 }

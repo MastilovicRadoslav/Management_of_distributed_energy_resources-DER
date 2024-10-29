@@ -1,7 +1,8 @@
-﻿using System;
-using System.ServiceModel;
-using Common.Interfaces;
+﻿using Common.Interfaces;
 using Common.Models;
+using System;
+using System.Collections.Generic;
+using System.ServiceModel;
 
 namespace UserClient.Services
 {
@@ -16,24 +17,36 @@ namespace UserClient.Services
             _client = factory.CreateChannel();
         }
 
-        public void RegisterResource(DERResource resource)
+        public void RegisterNewResource(DERResource resource)
         {
-            _client.RegisterResource(resource);
-            Console.WriteLine($"Resource {resource.Name} successfully registered on the server.");
-        }
-
-        public void SetSchedule(ResourceSchedule schedule)
-        {
-            // Kod za postavljanje rasporeda
-            // U slučaju da je `GetSchedule` metoda modifikovana da prima raspored, dodaj poziv serveru za to.
-            Console.WriteLine($"Schedule set for Resource ID {schedule.ResourceId}: Start - {schedule.StartTime}, End - {schedule.EndTime}");
+            _client.RegisterNewResource(resource);
+            Console.WriteLine($"Resource added with ID {resource.Id}, Name: {resource.Name}, Power: {resource.Power} kW");
         }
 
         public void DisplayResourceStatus()
         {
-            // Prikaz statusa resursa, kao što su ukupna snaga i proizvedena energija
-            // Ovu metodu ćemo proširiti kada dodamo API za status resursa na serveru
-            Console.WriteLine("Displaying current resource status...");
+            List<ResourceInfo> resources = _client.GetResourceStatus();
+
+            Console.WriteLine("\n--- Resource Status ---\n");
+            foreach (var resource in resources)
+            {
+                Console.WriteLine($"ID: {resource.Id}");
+                Console.WriteLine($"Name: {resource.Name}");
+                Console.WriteLine($"Power: {resource.Power} kW");
+                Console.WriteLine($"Status: {(resource.IsActive ? "Active" : "Inactive")}");
+                Console.WriteLine($"Start Time: {resource.StartTime}");
+                Console.WriteLine($"End Time: {resource.EndTime}");
+                Console.WriteLine($"Active Time: {resource.ActiveTime} seconds");
+                Console.WriteLine();
+            }
+
+            // Pretpostavljamo da su TotalActivePower i TotalProducedEnergy već prikupljeni sa servera
+            if (resources.Count > 0)
+            {
+                Console.WriteLine("--- Summary ---");
+                Console.WriteLine($"Total Active Power: {resources[0].TotalActivePower} kW");
+                Console.WriteLine($"Total Produced Energy: {resources[0].TotalProducedEnergy} kWh");
+            }
         }
     }
 }
