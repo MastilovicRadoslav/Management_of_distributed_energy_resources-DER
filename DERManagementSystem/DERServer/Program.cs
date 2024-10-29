@@ -1,6 +1,6 @@
-﻿using System;
+﻿using DERServer.Services;
+using System;
 using System.ServiceModel;
-using DERServer.Services;
 
 namespace DERServer
 {
