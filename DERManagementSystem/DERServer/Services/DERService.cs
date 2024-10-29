@@ -130,19 +130,5 @@ namespace DERServer.Services
             schedules.TryGetValue(resourceId, out ResourceSchedule schedule);
             return schedule; // Vraća raspored ako postoji ili `null` ako ne postoji
         }
-
-
-        public void LogProduction(int resourceId, double producedEnergy)
-        {
-            if (resources.ContainsKey(resourceId)) // Proverava da li resurs postoji u kolekciji.
-            {
-                statistics.TotalProducedEnergy += producedEnergy; // Dodaje proizvedenu energiju ukupnoj proizvedenoj energiji.
-                Console.WriteLine($"Energy logged for Resource ID {resourceId}: {producedEnergy} kWh."); // Ispisuje potvrdu o logovanju energije.
-            }
-        }
-
-
-
-
     }
 }

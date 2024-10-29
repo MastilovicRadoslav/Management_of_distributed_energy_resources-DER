@@ -7,6 +7,8 @@ namespace DERClient
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("\nClient is running."); // Prikazuje poruku da je server pokrenut.
+
             var clientService = new DERClientService();
             bool validResource = false;
 
