@@ -2,6 +2,7 @@
 using Common.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.ServiceModel;
 
 namespace DERServer.Services
@@ -130,5 +131,31 @@ namespace DERServer.Services
             schedules.TryGetValue(resourceId, out ResourceSchedule schedule);
             return schedule; // Vraća raspored ako postoji ili `null` ako ne postoji
         }
+
+        // ... (ostali delovi koda)
+
+        public void SaveDataToFile(string filePath)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                writer.WriteLine("All Resources:");
+                foreach (var resource in resources.Values)
+                {
+                    writer.WriteLine($"ID: {resource.Id}, Name: {resource.Name}, Power: {resource.Power}, IsActive: {resource.IsActive}");
+                }
+
+                writer.WriteLine("\nAcitiv Resource:");
+                foreach (var schedule in schedules.Values)
+                {
+                    writer.WriteLine($"ResourceID: {schedule.ResourceId}, StartTime: {schedule.StartTime}, EndTime: {schedule.EndTime}, ActiveTime: {schedule.ActiveTime}");
+                }
+
+                writer.WriteLine($"\nStatistics: TotalProducedEnergy: {statistics.TotalProducedEnergy}");
+            }
+
+            Console.WriteLine($"Data has been saved to {filePath}");
+        }
+
+
     }
 }
