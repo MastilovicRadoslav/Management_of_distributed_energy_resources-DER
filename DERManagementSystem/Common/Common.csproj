@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Interfaces\IDerService.cs" />
     <Compile Include="Models\DERResource.cs" />
+    <Compile Include="Models\ResourceInfo.cs" />
     <Compile Include="Models\ResourceSchedule.cs" />
     <Compile Include="Models\Statistics.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

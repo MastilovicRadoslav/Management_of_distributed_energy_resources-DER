@@ -4,10 +4,9 @@ namespace Common.Models
 {
     public class ResourceSchedule
     {
-        public int ResourceId { get; set; } // Jedinstveni identifikator resursa kojem raspored pripada.
-
-        public DateTime StartTime { get; set; } // Vreme kada raspored počinje za dati resurs.
-
-        public DateTime EndTime { get; set; } // Vreme kada raspored završava za dati resurs.
+        public int ResourceId { get; set; } // Strani ključ
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public double ActiveTime { get; set; } // Možda želite da koristite double?
     }
 }
