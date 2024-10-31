@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DERClient", "DERClient\DERC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserClient", "UserClient\UserClient.csproj", "{15BB0940-75BC-441C-A84E-F99D860C5A54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\..\..\Documents\GitHub\OIBIS\Project_3\Common\Common.csproj", "{85BF7CA8-8E9A-4F3A-A68D-0F1D98395902}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{85BF7CA8-8E9A-4F3A-A68D-0F1D98395902}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

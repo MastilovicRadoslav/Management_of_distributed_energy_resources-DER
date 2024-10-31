@@ -32,10 +32,22 @@ namespace UserClient.Services
 
             foreach (var resource in resources)
             {
-                RegisterNewResource(resource);
-                Console.WriteLine($"Resource {resource.Name} with ID {resource.Id} has been added from file.");
+                // Proverava da li resurs već postoji u bazi
+                var existingResource = _client.GetResourceStatus().FirstOrDefault(r => r.Id == resource.Id);
+
+                if (existingResource == null) // Ako resurs ne postoji
+                {
+                    RegisterNewResource(resource);
+                    Console.WriteLine($"Resource {resource.Name} with ID {resource.Id} has been added from file.");
+                }
+                else
+                {
+                    Console.WriteLine($"Resource with ID {resource.Id} already exists. Skipping this entry.");
+                }
             }
         }
+
+
 
         public void DisplayResourceStatus()
         {

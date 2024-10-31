@@ -6,7 +6,7 @@ Status: Inactive
 ResourceID: 2
 Name: Turbine 1
 Power: 55.0
-Status: Active
+Status: Inactive
 ---
 ResourceID: 3
 Name: Wind Turbine A
@@ -16,7 +16,7 @@ Status: Inactive
 ResourceID: 4
 Name: Battery Storage 1
 Power: 15.0
-Status: Active
+Status: Inactive
 ---
 ResourceID: 5
 Name: Hydro Plant 1
