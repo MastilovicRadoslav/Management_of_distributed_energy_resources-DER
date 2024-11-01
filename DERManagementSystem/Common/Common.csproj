@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\XmlDataAccess.cs" />
     <Compile Include="Interfaces\IDerService.cs" />
     <Compile Include="Models\DERResource.cs" />
     <Compile Include="Models\ResourceInfo.cs" />
