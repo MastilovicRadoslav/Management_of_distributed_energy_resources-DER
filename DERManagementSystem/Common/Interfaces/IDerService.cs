@@ -21,5 +21,10 @@ namespace Common.Interfaces
 
         [OperationContract]
         ResourceSchedule GetSchedule(int resourceId); // Dohvata plan rada (raspored) za određeni resurs na osnovu ID-ja.
+
+        [OperationContract]
+
+        void ClearAllResources();
+
     }
 }
