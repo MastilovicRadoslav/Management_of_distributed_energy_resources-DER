@@ -1,8 +1,9 @@
 ﻿using Common.Interfaces;
 using Common.Models;
+using DERServer.Data;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.ServiceModel;
 
 namespace DERServer.Services
@@ -10,33 +11,44 @@ namespace DERServer.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class DERService : IDERService
     {
-        private readonly Dictionary<int, DERResource> resources = new Dictionary<int, DERResource>(); // Skladišti sve registrovane resurse koristeći ID kao ključ.
-
-        private readonly Dictionary<int, ResourceSchedule> schedules = new Dictionary<int, ResourceSchedule>(); // Skladišti rasporede za resurse prema njihovim ID-jevima.
+        //private readonly Dictionary<int, DERResource> resources = new Dictionary<int, DERResource>(); // Skladišti sve registrovane resurse koristeći ID kao ključ.
 
         private readonly Statistics statistics = new Statistics(); // Čuva statistiku, uključujući ukupnu proizvedenu energiju.
 
+        private readonly XmlDataAccess _xmlDataAccess;
+
+        public DERService()
+        {
+            // Postavite putanju do XML datoteke
+            _xmlDataAccess = new XmlDataAccess("C:\\Users\\Lenovo\\Documents\\GitHub\\Management_of_distributed_energy_resources-DER\\Results\\resource.xml");
+        }
+
         public string RegisterResource(int resourceId)
         {
-            if (resources.ContainsKey(resourceId))
+            // Učitajte postojeće resurse iz XML datoteke
+            var existingResources = _xmlDataAccess.LoadResources();
+
+            // Pronađite resurs na osnovu ID-a
+            var resource = existingResources.FirstOrDefault(r => r.Id == resourceId);
+
+            if (resource != null)
             {
-                var schedule = new ResourceSchedule
-                {
-                    ResourceId = resourceId,
-                    StartTime = DateTime.Now,
-                    EndTime = DateTime.MinValue,
-                    ActiveTime = 0.00
-                };
-                schedules[resourceId] = schedule;
-                resources[resourceId].IsActive = true;
-                statistics.TotalActivePower += resources[resourceId].Power;
+                // Ažurirajte status resursa
+                resource.IsActive = true; // Postavite status resursa na aktivan
+                resource.StartTime = DateTime.Now; // Postavite vreme početka
 
-                // Ispis na serveru za aktivaciju resursa
+                // Ažurirajte ukupnu aktivnu snagu
+                statistics.TotalActivePower += resource.Power;
+
+                // Sačuvajte izmenjene resurse u XML
+                _xmlDataAccess.SaveResources(existingResources, statistics); // Sačuvajte izmene nazad u XML
+
+                // Ispis na konzolu
                 Console.WriteLine($"Resource with ID {resourceId} is now active on server.");
-                Console.WriteLine($"Start Time: {schedule.StartTime}");
-                Console.WriteLine($"Power: {resources[resourceId].Power} kW");
+                Console.WriteLine($"Start Time: {resource.StartTime}");
+                Console.WriteLine($"Active Energy: {resource.Power} kW");
 
-                return $"Resource with ID {resourceId} is now active.\nPower: {resources[resourceId].Power} kW";
+                return $"Resource with ID {resourceId} is now active.\nPower: {resource.Power} kW";
             }
             else
             {
@@ -44,32 +56,45 @@ namespace DERServer.Services
             }
         }
 
+
+
+
         public string UnregisterResource(int resourceId)
         {
-            if (resources.ContainsKey(resourceId) && resources[resourceId].IsActive)
+            // Učitajte postojeće resurse iz XML datoteke
+            var existingResources = _xmlDataAccess.LoadResources();
+
+            // Pronađite resurs na osnovu ID-a
+            var resource = existingResources.FirstOrDefault(r => r.Id == resourceId);
+
+            if (resource != null && resource.IsActive)
             {
-                resources[resourceId].IsActive = false;
+                // Deaktivirajte resurs
+                resource.IsActive = false;
 
-                if (schedules.TryGetValue(resourceId, out var schedule))
+                // Postavite EndTime
+                resource.EndTime = DateTime.Now;
+
+                // Izračunajte ActiveTime
+                if (resource.StartTime != DateTime.MinValue) // Proverite da StartTime nije null
                 {
-                    schedule.EndTime = DateTime.Now;
-                    schedule.ActiveTime = (schedule.EndTime - schedule.StartTime).TotalSeconds;
-                    double producedEnergy = resources[resourceId].Power * (schedule.ActiveTime / 3600.0);
-                    statistics.TotalProducedEnergy += producedEnergy;
-                    statistics.TotalActivePower -= resources[resourceId].Power;
-
-                    // Ispis na serveru za deaktivaciju resursa
-                    Console.WriteLine($"Resource with ID {resourceId} has been deactivated on server.");
-                    Console.WriteLine($"End Time: {schedule.EndTime}");
-                    Console.WriteLine($"Active Time: {schedule.ActiveTime} seconds");
-                    Console.WriteLine($"Produced Energy: {producedEnergy} kWh");
-
-                    return $"Resource with ID {resourceId} has stopped.\nActive time: {schedule.ActiveTime} seconds.\nProduced energy: {producedEnergy} kWh.";
+                    resource.ActiveTime = (resource.EndTime - resource.StartTime).TotalSeconds;
                 }
-                else
-                {
-                    return "No schedule found for this resource.";
-                }
+
+                double producedEnergy = resource.Power * (resource.ActiveTime / 3600.0); // Izračunajte proizvedenu energiju
+                statistics.TotalProducedEnergy += producedEnergy; // Ažurirajte ukupno proizvedenu energiju
+                statistics.TotalActivePower -= resource.Power; // Ažurirajte ukupnu aktivnu snagu
+
+                // Sačuvajte izmenjene resurse u XML
+                _xmlDataAccess.SaveResources(existingResources, statistics); // Sačuvajte izmene nazad u XML
+
+                // Ispis na serveru za deaktivaciju resursa
+                Console.WriteLine($"Resource with ID {resourceId} has been deactivated on server.");
+                Console.WriteLine($"End Time: {resource.EndTime}");
+                Console.WriteLine($"Active Time: {resource.ActiveTime} seconds");
+                Console.WriteLine($"Produced Energy: {producedEnergy} kWh");
+
+                return $"Resource with ID {resourceId} has stopped.\nActive time: {resource.ActiveTime} seconds.\nProduced energy: {producedEnergy} kWh.";
             }
             else
             {
@@ -79,26 +104,39 @@ namespace DERServer.Services
 
 
 
-
-        // Implementacija nove metode za postavljanje resursa sa rasporedom
         public void RegisterNewResource(DERResource resource)
         {
-            if (!resources.ContainsKey(resource.Id))
+            // Učitajte postojeće resurse iz XML datoteke
+            var existingResources = _xmlDataAccess.LoadResources();
+
+            // Proverite da li resurs već postoji u XML datoteci
+            if (!existingResources.Any(r => r.Id == resource.Id))
             {
-                resources[resource.Id] = resource;
+
+                // Dodajte resurs u XML datoteku
+                existingResources.Add(resource);
+                _xmlDataAccess.SaveResources(existingResources, statistics); // Sačuvajte izmene nazad u XML
+
                 Console.WriteLine($"Resource added: ID = {resource.Id}, Name = {resource.Name}, Power = {resource.Power} kW");
             }
             else
             {
-                Console.WriteLine($"Resource with ID {resource.Id} already exists.");
+                Console.WriteLine($"Resource with ID {resource.Id} already exists in XML. Skipping this entry.");
             }
         }
 
+
+
         public List<ResourceInfo> GetResourceStatus()
         {
+            // Učitajte sve resurse iz XML datoteke
+            var existingResources = _xmlDataAccess.LoadResources();
             List<ResourceInfo> resourceInfoList = new List<ResourceInfo>();
 
-            foreach (var resource in resources.Values)
+            // Učitajte ukupne vrednosti iz XML-a
+            var (totalActivePower, totalProducedEnergy) = _xmlDataAccess.LoadTotals();
+
+            foreach (var resource in existingResources)
             {
                 var resourceInfo = new ResourceInfo
                 {
@@ -106,54 +144,53 @@ namespace DERServer.Services
                     Name = resource.Name,
                     Power = resource.Power,
                     IsActive = resource.IsActive,
-                    TotalActivePower = statistics.TotalActivePower,
-                    TotalProducedEnergy = statistics.TotalProducedEnergy
+                    TotalActivePower = totalActivePower, // Dodelite učitanu vrednost
+                    TotalProducedEnergy = totalProducedEnergy // Dodelite učitanu vrednost
                 };
 
-                // Ako postoji raspored za resurs, dodaj informacije o rasporedu
-                if (schedules.TryGetValue(resource.Id, out var schedule))
-                {
-                    resourceInfo.StartTime = schedule.StartTime;
-                    resourceInfo.EndTime = schedule.EndTime;
-                    resourceInfo.ActiveTime = schedule.ActiveTime;
-                }
+                // Dodelite ActiveTime i druge informacije ako su dostupne
+                resourceInfo.StartTime = resource.StartTime;
+                resourceInfo.EndTime = resource.EndTime;
+                resourceInfo.ActiveTime = resource.ActiveTime;
 
                 resourceInfoList.Add(resourceInfo);
             }
-
-            Console.WriteLine("Fetched resource status for all resources.");
             return resourceInfoList;
         }
 
+
+
         public ResourceSchedule GetSchedule(int resourceId)
         {
-            // Proverava da li postoji raspored za dati ID resursa
-            schedules.TryGetValue(resourceId, out ResourceSchedule schedule);
-            return schedule; // Vraća raspored ako postoji ili `null` ako ne postoji
-        }
+            // Učitajte sve resurse iz XML datoteke
+            var existingResources = _xmlDataAccess.LoadResources();
 
-        // ... (ostali delovi koda)
+            // Pronađite resurs na osnovu ID-a
+            var resource = existingResources.FirstOrDefault(r => r.Id == resourceId);
 
-        public void SaveDataToFile(string filePath)
-        {
-            using (StreamWriter writer = new StreamWriter(filePath))
+            // Prikupite raspored za resurs
+            if (resource != null)
             {
-                writer.WriteLine("All Resources:");
-                foreach (var resource in resources.Values)
+                // Pretpostavljamo da je raspored povezan sa resursom u XML-u, 
+                // ako koristite poseban XML element za rasporede, dodajte tu logiku.
+                var schedule = new ResourceSchedule
                 {
-                    writer.WriteLine($"ID: {resource.Id}, Name: {resource.Name}, Power: {resource.Power}, IsActive: {resource.IsActive}");
-                }
+                    ResourceId = resource.Id,
+                    StartTime = resource.StartTime, // Očitajte iz resursa
+                    EndTime = resource.EndTime, // Očitajte iz resursa
+                    ActiveTime = resource.ActiveTime // Očitajte iz resursa
+                };
 
-                writer.WriteLine("\nAcitiv Resource:");
-                foreach (var schedule in schedules.Values)
-                {
-                    writer.WriteLine($"ResourceID: {schedule.ResourceId}, StartTime: {schedule.StartTime}, EndTime: {schedule.EndTime}, ActiveTime: {schedule.ActiveTime}");
-                }
-
-                writer.WriteLine($"\nStatistics: TotalProducedEnergy: {statistics.TotalProducedEnergy}");
+                return schedule; // Vraća raspored
             }
 
-            Console.WriteLine($"Data has been saved to {filePath}");
+            return null; // Ako resurs nije pronađen
+        }
+
+
+        public void ClearAllResources()
+        {
+            _xmlDataAccess.ClearResources(); // Očisti resurse iz XML datoteke
         }
 
 
