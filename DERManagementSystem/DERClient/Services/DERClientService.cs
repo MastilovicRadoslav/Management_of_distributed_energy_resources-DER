@@ -23,7 +23,7 @@ namespace DERClient.Services
 
         public bool DisplayResourceSchedule(int resourceId)
         {
-            // Pribavi informacije o resursu i rasporedu
+            // Pribavi informacije o resursu
             var resourceInfo = _client.GetResourceStatus().Find(r => r.Id == resourceId);
             var schedule = _client.GetSchedule(resourceId);
 
@@ -35,13 +35,17 @@ namespace DERClient.Services
                 Console.WriteLine($"Power: {resourceInfo.Power} kW");
                 Console.WriteLine($"Status: {(resourceInfo.IsActive ? "Active" : "Inactive")}");
 
-                // Prikaži samo ako raspored postoji
+                // Prikaži raspored samo ako postoji
                 if (schedule != null)
                 {
                     Console.WriteLine("\n--- Schedule Information ---");
                     Console.WriteLine($"Start Time: {schedule.StartTime}");
                     Console.WriteLine($"End Time: {schedule.EndTime}");
                     Console.WriteLine($"Active Time: {schedule.ActiveTime} seconds");
+                }
+                else
+                {
+                    Console.WriteLine("No schedule information available for this resource.");
                 }
 
                 return true;
@@ -52,6 +56,7 @@ namespace DERClient.Services
                 return false;
             }
         }
+
 
 
         public string RegisterResource(int resourceId)
