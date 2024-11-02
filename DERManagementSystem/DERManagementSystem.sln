@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserClient", "UserClient\Us
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{85BF7CA8-8E9A-4F3A-A68D-0F1D98395902}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DERManagementSystem.Tests", "DERManagementSystem.Tests\DERManagementSystem.Tests.csproj", "{D6BF42ED-9C04-41C3-B960-A1DCF61BACF9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{85BF7CA8-8E9A-4F3A-A68D-0F1D98395902}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85BF7CA8-8E9A-4F3A-A68D-0F1D98395902}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85BF7CA8-8E9A-4F3A-A68D-0F1D98395902}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6BF42ED-9C04-41C3-B960-A1DCF61BACF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6BF42ED-9C04-41C3-B960-A1DCF61BACF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6BF42ED-9C04-41C3-B960-A1DCF61BACF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6BF42ED-9C04-41C3-B960-A1DCF61BACF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

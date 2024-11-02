@@ -11,6 +11,10 @@ namespace UserClient.Services
         private readonly FileResourceLoader _fileLoader;
 
 
+        public UserClientService(IDERService client)
+        {
+            _client = client;
+        }
         public UserClientService()
         {
             var factory = new ChannelFactory<IDERService>(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:8080/DERService"));
