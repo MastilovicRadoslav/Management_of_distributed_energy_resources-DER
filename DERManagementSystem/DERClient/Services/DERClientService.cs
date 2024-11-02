@@ -8,6 +8,10 @@ namespace DERClient.Services
     {
         private readonly IDERService _client;
 
+        public DERClientService(IDERService client) // Konstruktor sa argumentom
+        {
+            _client = client;
+        }
         public DERClientService()
         {
             var factory = new ChannelFactory<IDERService>(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:8080/DERService"));
