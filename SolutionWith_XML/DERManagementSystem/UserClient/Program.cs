@@ -15,7 +15,7 @@ namespace UserClient
                 Console.WriteLine("1 - Register new resources through the console.");
                 Console.WriteLine("2 - Register new resources through report from file.");
                 Console.WriteLine("3 - Show all information about all resources.");
-                Console.WriteLine("4 - Restart all resources in Database.");
+                Console.WriteLine("4 - Delete all resources in resources station.");
                 Console.WriteLine("0 - Exit");
                 Console.Write("Option: ");
                 var option = Console.ReadLine();

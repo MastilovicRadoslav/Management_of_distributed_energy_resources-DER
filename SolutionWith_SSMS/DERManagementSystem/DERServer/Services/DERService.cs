@@ -24,7 +24,7 @@ namespace DERServer.Services
             {
                 var resource = context.DERResources.FirstOrDefault(r => r.Id == resourceId);
 
-                if (resource != null)
+                if (resource != null && !resource.IsActive)
                 {
                     resource.IsActive = true;
                     resource.StartTime = DateTime.Now;
@@ -54,12 +54,11 @@ namespace DERServer.Services
                     Console.WriteLine($"Total Active Power    : {statistics.TotalActivePower} kW");
                     Console.WriteLine("------------------------------------------------------------\n");
 
-
                     return $"\nResource with ID {resourceId} is now active.";
                 }
                 else
                 {
-                    return "Resource not found.";
+                    return resource == null ? "Resource not found." : "Resource is already active.";
                 }
             }
         }
@@ -118,7 +117,6 @@ namespace DERServer.Services
                         Console.WriteLine($"Total Active Power    : {statistics.TotalActivePower} kW");
                         Console.WriteLine($"Total Produced Energy : {statistics.TotalProducedEnergy} kWh");
                         Console.WriteLine("------------------------------------------------------------\n");
-
 
                         return $"Resource with ID {resourceId} has stopped.";
                     }
