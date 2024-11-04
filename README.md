@@ -44,8 +44,8 @@ Projekat **DERManagementSystem.Tests** sadrži jedinične testove za servise i k
 2. Postavite **DERServer** kao projekat koji se prvi pokreće, a zatim pokrenite **DERClient** i **UserClient**.
 3. Pokrenite projekte na opciji "Start".
 4. U konzoli **UserClient** imate ponuđene opcije za dodavanje resursa (preko konzole ili iz fajla), prikazivanje svih informacija o resursima (uključujući aktivnu snagu i proizvedenu energiju), kao i brisanje svih dosadašnjih resursa iz baze.
-5. U konzoli **DERClient** unesite ID resursa koji ste dodali preko **UserClient**. Ako resurs postoji, biće prikazane informacije o njemu i njegovom rasporedu. Takođe, imate mogućnost aktivacije i deaktivacije resursa, uz ispis svih potrebnih informacija na **DERServer**.
-6. Kada deaktivirate resurse iz **DERClient**, informacije u **UserClient** prikazaće ukupnu proizvedenu energiju na osnovu vremena aktivacije i jačine resursa.
+5. U konzoli **DERClient** unesite ID resursa koji ste dodali preko **UserClient**. Ako resurs postoji, biće prikazane informacije o njemu i njegovom rasporedu. Takođe, imate mogućnost aktivacije i deaktivacije resursa, uz ispis svih potrebnih informacija na **DERServer** kao i na ostalim projektima.
+6. Kada deaktivirate resurse iz **DERClient**, informacije u **UserClient** prikazaće ukupnu proizvedenu energiju na osnovu vremena aktivacije i jačine resursa takodje sve informacije ce biti prikazane i o aktivnoj snazi.
    
 ### Napomena
 - U slučaju korišćenja **XML baze podataka**, ID resursa se unosi ručno kroz konzolu prilikom registracije resursa.
@@ -59,9 +59,7 @@ Projekat **DERManagementSystem.Tests** sadrži jedinične testove za servise i k
 ## Licenca
 Ovaj projekat je licenciran pod MIT licencom.
 
-## DEMO_1
-U nastavku se nalazi demo snimak testiranja aplikacije sa XML bazom podataka koji prikazuje kako funkcionišu različite operacije u **UserClient** i **DERClient** konzolama sve to povezano sa **DERServer**:
+## DEMO
+U nastavku se nalazi demo snimak testiranja aplikacije sa SSMS bazom podataka (sa XML je isto samo se ID dodatno unosi) koji prikazuje kako funkcionišu različite operacije u **UserClient** i **DERClient** konzolama sve to povezano sa **DERServer**:
 
-## DEMO_2
-U nastavku se nalazi demo snimak testiranja aplikacije sa SSM bazom podataka koji prikazuje kako funkcionišu različite operacije u **UserClient** i **DERClient** konzolama sve to povezano sa **DERServer**:
 
