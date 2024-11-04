@@ -1,10 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Common.Interfaces;
+﻿using Common.Interfaces;
 using Common.Models;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System.Collections.Generic;
-using UserClient.Services;
 using System.IO;
+using UserClient.Services;
 
 namespace DERManagementSystem.Tests
 {
@@ -17,28 +17,25 @@ namespace DERManagementSystem.Tests
         [TestInitialize]
         public void Setup()
         {
+            // Inicijalizacija mock IDERService i UserClientService
             _mockService = new Mock<IDERService>();
-
-            // Kreiranje instance UserClientService sa mock-ovanim IDERService
             _userService = new UserClientService(_mockService.Object);
 
+            // Kreiranje testnog fajla za LoadAndRegisterResourcesFromFile
             string testData = "Name: Resource1\nPower: 30\nStatus: Inactive\n---\n" +
                   "Name: Resource2\nPower: 40\nStatus: Inactive\n---";
             File.WriteAllText("testFilePath.txt", testData);
         }
 
-
         [TestMethod]
         public void TestRegisterNewResource_AddsResourceSuccessfully()
         {
-            // Arrange
+            // Test proverava da li RegisterNewResource dodaje resurs uspešno
             var resource = new DERResource { Name = "Test Resource", Power = 25, IsActive = false };
             _mockService.Setup(s => s.RegisterNewResource(It.IsAny<DERResource>())).Returns(resource);
 
-            // Act
             bool result = _userService.RegisterNewResource(resource);
 
-            // Assert
             Assert.IsTrue(result, "Resource should be added successfully.");
             _mockService.Verify(s => s.RegisterNewResource(It.IsAny<DERResource>()), Times.Once);
         }
@@ -46,14 +43,12 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestRegisterNewResource_DuplicateResource()
         {
-            // Arrange
+            // Test proverava da li RegisterNewResource odbija duplikat resursa
             var resource = new DERResource { Name = "Duplicate Resource", Power = 25, IsActive = false };
             _mockService.Setup(s => s.RegisterNewResource(It.IsAny<DERResource>())).Returns((DERResource)null);
 
-            // Act
             bool result = _userService.RegisterNewResource(resource);
 
-            // Assert
             Assert.IsFalse(result, "Duplicate resource should not be added.");
             _mockService.Verify(s => s.RegisterNewResource(It.IsAny<DERResource>()), Times.Once);
         }
@@ -61,7 +56,7 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestLoadAndRegisterResourcesFromFile_AddsMultipleResources()
         {
-            // Arrange
+            // Test proverava da li LoadAndRegisterResourcesFromFile dodaje više resursa iz fajla
             var resources = new List<DERResource>
             {
                 new DERResource { Name = "Resource1", Power = 30 },
@@ -70,17 +65,15 @@ namespace DERManagementSystem.Tests
             _mockService.Setup(s => s.RegisterNewResource(It.IsAny<DERResource>()))
                         .Returns((DERResource r) => r);
 
-            // Act
             _userService.LoadAndRegisterResourcesFromFile("testFilePath.txt");
 
-            // Assert
             _mockService.Verify(s => s.RegisterNewResource(It.IsAny<DERResource>()), Times.Exactly(resources.Count));
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            // Brisanje test fajla nakon testa
+            // Brisanje testnog fajla nakon testova
             if (File.Exists("testFilePath.txt"))
             {
                 File.Delete("testFilePath.txt");
@@ -90,7 +83,7 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestDisplayResourceStatus_DisplaysAllResources()
         {
-            // Arrange
+            // Test proverava da li DisplayResourceStatus ispravno prikazuje sve resurse
             var resources = new List<ResourceInfo>
             {
                 new ResourceInfo { Id = 1, Name = "Resource1", Power = 25, IsActive = true },
@@ -101,10 +94,8 @@ namespace DERManagementSystem.Tests
             _mockService.Setup(s => s.GetResourceStatus()).Returns(resources);
             _mockService.Setup(s => s.GetStatistics()).Returns(statistics);
 
-            // Act
             _userService.DisplayResourceStatus();
 
-            // Assert
             _mockService.Verify(s => s.GetResourceStatus(), Times.Once);
             _mockService.Verify(s => s.GetStatistics(), Times.Once);
         }
@@ -112,10 +103,9 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestClearAllResources_DeletesAllResources()
         {
-            // Act
+            // Test proverava da li ClearAllResources uspešno briše sve resurse
             _userService.ClearAllResources();
 
-            // Assert
             _mockService.Verify(s => s.ClearAllResources(), Times.Once);
         }
     }

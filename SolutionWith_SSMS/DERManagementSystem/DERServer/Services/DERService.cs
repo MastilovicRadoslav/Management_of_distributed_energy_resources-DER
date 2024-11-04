@@ -3,7 +3,6 @@ using Common.Models;
 using DERServer.Data;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Migrations;
 using System.Linq;
 using System.ServiceModel;
 
@@ -12,10 +11,13 @@ namespace DERServer.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class DERService : IDERService
     {
-
         private readonly Statistics statistics = new Statistics(); // Čuva statistiku, uključujući ukupnu proizvedenu energiju.
 
-
+        /// <summary>
+        /// Aktivira resurs na osnovu prosleđenog ID-a. Ažurira početno vreme aktivacije resursa i povećava ukupnu aktivnu snagu.
+        /// </summary>
+        /// <param name="resourceId">ID resursa za aktivaciju</param>
+        /// <returns>Poruka o statusu aktivacije resursa</returns>
         public string RegisterResource(int resourceId)
         {
             using (var context = new DERManagementContext())
@@ -27,7 +29,6 @@ namespace DERServer.Services
                     resource.IsActive = true;
                     resource.StartTime = DateTime.Now;
 
-                    // Pronađi ili kreiraj zapis u tabeli Statistics
                     var statistics = context.Statistics.FirstOrDefault();
                     if (statistics == null)
                     {
@@ -41,13 +42,20 @@ namespace DERServer.Services
 
                     context.SaveChanges();
 
-                    Console.WriteLine($"Resource with ID {resourceId} is now active.");
-                    Console.WriteLine($"Name: {resource.Name}");
-                    Console.WriteLine($"Power: {resource.Power} kW");
-                    Console.WriteLine($"Start Time: {resource.StartTime}");
-                    Console.WriteLine($"Total Active Power: {statistics.TotalActivePower} kW");
+                    Console.WriteLine("\n------------------------------------------------------------");
+                    Console.WriteLine("                   Resource Activation Summary              ");
+                    Console.WriteLine("------------------------------------------------------------");
+                    Console.WriteLine($"Resource ID           : {resourceId}");
+                    Console.WriteLine($"Name                  : {resource.Name}");
+                    Console.WriteLine($"Power                 : {resource.Power} kW");
+                    Console.WriteLine($"Activation Start Time : {resource.StartTime:dd-MM-yyyy HH:mm:ss}");
+                    Console.WriteLine("------------------------------------------------------------");
+                    Console.WriteLine("Current Statistics:");
+                    Console.WriteLine($"Total Active Power    : {statistics.TotalActivePower} kW");
+                    Console.WriteLine("------------------------------------------------------------\n");
 
-                    return $"Resource with ID {resourceId} is now active.";
+
+                    return $"\nResource with ID {resourceId} is now active.";
                 }
                 else
                 {
@@ -56,7 +64,12 @@ namespace DERServer.Services
             }
         }
 
-
+        /// <summary>
+        /// Deaktivira resurs na osnovu ID-a, postavlja vreme završetka i izračunava proizvedenu energiju.
+        /// Ažurira statistiku ukupne proizvedene energije i aktivne snage.
+        /// </summary>
+        /// <param name="resourceId">ID resursa za deaktivaciju</param>
+        /// <returns>Poruka o statusu deaktivacije resursa</returns>
         public string UnregisterResource(int resourceId)
         {
             using (var context = new DERManagementContext())
@@ -65,7 +78,6 @@ namespace DERServer.Services
 
                 if (resource != null && resource.IsActive)
                 {
-                    // Deaktivirajte resurs
                     resource.IsActive = false;
                     resource.EndTime = DateTime.Now;
 
@@ -74,13 +86,12 @@ namespace DERServer.Services
                         resource.ActiveTime = (resource.EndTime.Value - resource.StartTime.Value).TotalSeconds;
                         double producedEnergy = resource.Power * (resource.ActiveTime / 3600.0); // kWh
 
-                        // Pronađite ili kreirajte zapis u tabeli Statistics
                         var statistics = context.Statistics.FirstOrDefault();
                         if (statistics == null)
                         {
                             statistics = new Statistics
                             {
-                                TotalActivePower = 0, // Resetujemo jer je resurs deaktiviran
+                                TotalActivePower = 0,
                                 TotalProducedEnergy = producedEnergy
                             };
                             context.Statistics.Add(statistics);
@@ -93,15 +104,20 @@ namespace DERServer.Services
 
                         context.SaveChanges();
 
-                        // Ispis informacija o resursu
-                        Console.WriteLine($"Resource with ID {resourceId} has been deactivated.");
-                        Console.WriteLine($"Name: {resource.Name}");
-                        Console.WriteLine($"Power: {resource.Power} kW");
-                        Console.WriteLine($"Start Time: {resource.StartTime}");
-                        Console.WriteLine($"End Time: {resource.EndTime}");
-                        Console.WriteLine($"Active Time: {resource.ActiveTime} seconds");
-                        Console.WriteLine($"Produced Energy: {statistics.TotalProducedEnergy} kWh");
-                        Console.WriteLine($"Active Energy: {statistics.TotalActivePower} kWh");
+                        Console.WriteLine("------------------------------------------------------------");
+                        Console.WriteLine("                   Resource Deactivation Summary            ");
+                        Console.WriteLine("------------------------------------------------------------");
+                        Console.WriteLine($"Resource ID           : {resourceId}");
+                        Console.WriteLine($"Name                  : {resource.Name}");
+                        Console.WriteLine($"Power                 : {resource.Power} kW");
+                        Console.WriteLine($"Start Time            : {(resource.StartTime.HasValue ? resource.StartTime.Value.ToString("dd-MM-yyyy HH:mm:ss") : "N/A")}");
+                        Console.WriteLine($"End Time              : {(resource.EndTime.HasValue ? resource.EndTime.Value.ToString("dd-MM-yyyy HH:mm:ss") : "N/A")}");
+                        Console.WriteLine($"Active Duration       : {resource.ActiveTime} seconds");
+                        Console.WriteLine("------------------------------------------------------------");
+                        Console.WriteLine("Statistics Update:");
+                        Console.WriteLine($"Total Active Power    : {statistics.TotalActivePower} kW");
+                        Console.WriteLine($"Total Produced Energy : {statistics.TotalProducedEnergy} kWh");
+                        Console.WriteLine("------------------------------------------------------------\n");
 
 
                         return $"Resource with ID {resourceId} has stopped.";
@@ -118,8 +134,11 @@ namespace DERServer.Services
             }
         }
 
-
-
+        /// <summary>
+        /// Registruje novi resurs u bazi, proverava da li već postoji resurs sa istim karakteristikama.
+        /// </summary>
+        /// <param name="resource">Resurs koji se registruje</param>
+        /// <returns>Vraća resurs sa dodeljenim ID-em ako je uspešno dodato, inače null</returns>
         public DERResource RegisterNewResource(DERResource resource)
         {
             using (var context = new DERManagementContext())
@@ -132,22 +151,23 @@ namespace DERServer.Services
                     context.DERResources.Add(resource);
                     context.SaveChanges(); // Sada je `resource.Id` dodeljen u bazi
 
-                    // Preuzmi ažurirani resurs sa generisanim ID-jem
                     return context.DERResources.FirstOrDefault(r => r.Id == resource.Id);
                 }
                 else
                 {
                     Console.WriteLine("Resource with similar characteristics already exists. Skipping this entry.");
-                    return null; // Vrati `null` ako resurs već postoji
+                    return null;
                 }
             }
         }
 
-
-
+        /// <summary>
+        /// Preuzima status svih resursa u bazi, uključujući informacije o aktivnim i neaktivnim resursima.
+        /// </summary>
+        /// <returns>Lista informacija o resursima</returns>
         public List<ResourceInfo> GetResourceStatus()
         {
-            using (var context = new DERManagementContext()) // Inicijalizujte DbContext
+            using (var context = new DERManagementContext())
             {
                 var resources = context.DERResources.ToList();
                 List<ResourceInfo> resourceInfoList = new List<ResourceInfo>();
@@ -172,22 +192,25 @@ namespace DERServer.Services
             }
         }
 
+        /// <summary>
+        /// Briše sve resurse i statistiku iz baze podataka i resetuje ID brojač.
+        /// </summary>
         public void ClearAllResources()
         {
-            using (var context = new DERManagementContext()) // Inicijalizujte DbContext
+            using (var context = new DERManagementContext())
             {
-                // Brisanje svih resursa iz tabela
                 context.DERResources.RemoveRange(context.DERResources);
                 context.Statistics.RemoveRange(context.Statistics);
-                context.SaveChanges(); // Sačuvajte promene u bazi
+                context.SaveChanges();
 
-                // Resetovanje IDENTITY vrednosti za DERResources tabelu
                 context.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('DERResources', RESEED, 0)");
             }
-
-            //Console.WriteLine("All resources cleared from the database and ID reset.");
         }
 
+        /// <summary>
+        /// Dohvata statistiku koja sadrži ukupnu aktivnu snagu i ukupnu proizvedenu energiju.
+        /// </summary>
+        /// <returns>Statistički podaci iz baze</returns>
         public Statistics GetStatistics()
         {
             using (var context = new DERManagementContext())
@@ -195,6 +218,5 @@ namespace DERServer.Services
                 return context.Statistics.FirstOrDefault() ?? new Statistics();
             }
         }
-
     }
 }

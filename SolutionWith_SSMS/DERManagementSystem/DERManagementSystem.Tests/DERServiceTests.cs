@@ -1,5 +1,4 @@
 ﻿using DERServer.Services;
-using Common.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 
@@ -20,6 +19,7 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestRegisterNewResource()
         {
+            // Test dodavanja novog resursa
             var resource = new DERResource { Name = "Test Resource", Power = 25, IsActive = false };
 
             var addedResource = _service.RegisterNewResource(resource);
@@ -34,6 +34,7 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestRegisterDuplicateResource()
         {
+            // Test sprečavanja dodavanja duplikata resursa
             var resource = new DERResource { Name = "Test Resource", Power = 25, IsActive = false };
             _service.RegisterNewResource(resource);
 
@@ -47,6 +48,7 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestActivateResource()
         {
+            // Test aktivacije resursa
             var resource = new DERResource { Name = "Active Resource", Power = 50, IsActive = false };
             var addedResource = _service.RegisterNewResource(resource);
 
@@ -60,6 +62,7 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestActivateNonexistentResource()
         {
+            // Test pokušaja aktivacije resursa koji ne postoji
             var result = _service.RegisterResource(999);
 
             Assert.IsTrue(result.Contains("Resource not found"), "Should return error for non-existent resource.");
@@ -68,6 +71,7 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestUnregisterResource()
         {
+            // Test deaktivacije resursa
             var resource = new DERResource { Name = "Test Resource", Power = 50.0, IsActive = false };
             var addedResource = _service.RegisterNewResource(resource);
             _service.RegisterResource(addedResource.Id);
@@ -82,6 +86,7 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestUnregisterInactiveResource()
         {
+            // Test deaktivacije resursa koji je već neaktivan
             var resource = new DERResource { Name = "Inactive Resource", Power = 50.0, IsActive = false };
             var addedResource = _service.RegisterNewResource(resource);
 
@@ -93,6 +98,7 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestClearAllResources()
         {
+            // Test brisanja svih resursa iz baze
             var resource1 = new DERResource { Name = "Resource To Clear", Power = 30, IsActive = false };
             var resource2 = new DERResource { Name = "Another Resource", Power = 20, IsActive = false };
             _service.RegisterNewResource(resource1);
@@ -107,6 +113,7 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestGetResourceStatus()
         {
+            // Test preuzimanja statusa resursa
             var resource = new DERResource { Name = "Status Resource", Power = 25, IsActive = false };
             var addedResource = _service.RegisterNewResource(resource);
 
@@ -118,6 +125,7 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestGetStatistics()
         {
+            // Test statistike resursa (ukupna snaga i proizvedena energija)
             var resource1 = new DERResource { Name = "Stat Resource 1", Power = 30, IsActive = false };
             var resource2 = new DERResource { Name = "Stat Resource 2", Power = 20, IsActive = false };
             _service.RegisterNewResource(resource1);

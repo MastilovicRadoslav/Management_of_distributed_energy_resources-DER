@@ -9,11 +9,10 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestDERResourceInitialization()
         {
-            // Arrange
+            // Test inicijalizacije DERResource objekta sa zadatim vrednostima
             var name = "Solar Panel";
             var power = 25.0;
 
-            // Act
             var resource = new DERResource
             {
                 Name = name,
@@ -21,7 +20,6 @@ namespace DERManagementSystem.Tests
                 IsActive = false
             };
 
-            // Assert
             Assert.AreEqual(name, resource.Name, "Name should be set correctly.");
             Assert.AreEqual(power, resource.Power, "Power should be set correctly.");
             Assert.IsFalse(resource.IsActive, "Resource should be initialized as inactive.");
@@ -30,7 +28,7 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestDERResourceActivation()
         {
-            // Arrange
+            // Test aktivacije resursa postavljanjem IsActive na true
             var resource = new DERResource
             {
                 Name = "Wind Turbine",
@@ -38,24 +36,21 @@ namespace DERManagementSystem.Tests
                 IsActive = false
             };
 
-            // Act
             resource.IsActive = true;
 
-            // Assert
             Assert.IsTrue(resource.IsActive, "Resource should be activated.");
         }
 
         [TestMethod]
         public void TestStatisticsInitialization()
         {
-            // Arrange & Act
+            // Test inicijalizacije Statistics objekta sa nuliranim vrednostima
             var stats = new Statistics
             {
                 TotalActivePower = 0,
                 TotalProducedEnergy = 0
             };
 
-            // Assert
             Assert.AreEqual(0, stats.TotalActivePower, "Total Active Power should initialize to 0.");
             Assert.AreEqual(0, stats.TotalProducedEnergy, "Total Produced Energy should initialize to 0.");
         }
@@ -63,18 +58,16 @@ namespace DERManagementSystem.Tests
         [TestMethod]
         public void TestStatisticsUpdate()
         {
-            // Arrange
+            // Test ažuriranja vrednosti TotalActivePower i TotalProducedEnergy u Statistics objektu
             var stats = new Statistics
             {
                 TotalActivePower = 50,
                 TotalProducedEnergy = 100
             };
 
-            // Act
             stats.TotalActivePower += 20;
             stats.TotalProducedEnergy += 50;
 
-            // Assert
             Assert.AreEqual(70, stats.TotalActivePower, "Total Active Power should update correctly.");
             Assert.AreEqual(150, stats.TotalProducedEnergy, "Total Produced Energy should update correctly.");
         }

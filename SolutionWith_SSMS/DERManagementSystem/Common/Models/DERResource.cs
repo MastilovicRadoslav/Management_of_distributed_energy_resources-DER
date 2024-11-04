@@ -1,6 +1,4 @@
-﻿using Common.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 public class DERResource
 {
@@ -8,8 +6,6 @@ public class DERResource
     public string Name { get; set; }
     public double Power { get; set; }
     public bool IsActive { get; set; }
-
-    // Nova polja
     public DateTime? StartTime { get; set; } // Nullable
     public DateTime? EndTime { get; set; } // Nullable
     public double ActiveTime { get; set; }
