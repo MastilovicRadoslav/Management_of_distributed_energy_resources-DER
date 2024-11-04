@@ -125,7 +125,7 @@ namespace UserClient.Services
         public void ClearAllResources()
         {
             _client.ClearAllResources();
-            Console.WriteLine("\nResource deletion successful!");
+            Console.WriteLine("\nDistributed resource station deletion successful!");
         }
     }
 }

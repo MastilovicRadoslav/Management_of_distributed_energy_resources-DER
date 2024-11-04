@@ -25,12 +25,29 @@ namespace UserClient
                     case "1":
                         RegisterNewResource(userService);
                         break;
-                    case "2":
-                        Console.Write("Enter type 'DA': ");
-                        var filePath = Console.ReadLine();
-                        filePath = "C:\Users\Lenovo\Documents\GitHub\Management_of_distributed_energy_resources-DER\SolutionWith_XML\Resources\\resources.txt";
-                        userService.LoadAndRegisterResourcesFromFile(filePath);
-                        break;
+					case "2":
+						string input;
+						do
+						{
+							Console.Write("Enter type 'Y' or 'N': ");
+							input = Console.ReadLine().ToUpper(); // Konvertuje unos u velika slova za lakšu proveru
+
+							if (input != "Y" && input != "N")
+							{
+								Console.WriteLine("Invalid input. Please enter 'Y' or 'N'.");
+							}
+						} while (input != "Y" && input != "N");
+
+						if (input == "Y")
+						{
+							var filePath = "C:\\Users\\Lenovo\\Documents\\GitHub\\Management_of_distributed_energy_resources-DER\\SolutionWith_XML\\Resources\\resources.txt";
+							userService.LoadAndRegisterResourcesFromFile(filePath);
+						}
+						else
+						{
+							Console.WriteLine("Operation canceled.");
+						}
+						break;
                     case "3":
                         userService.DisplayResourceStatus(); // Prikaz svih resursa
                         break;

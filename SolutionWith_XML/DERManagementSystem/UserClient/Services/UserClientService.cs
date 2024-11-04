@@ -118,7 +118,7 @@ namespace UserClient.Services
         public void ClearAllResources()
         {
             _client.ClearAllResources(); // Poziv na server za brisanje svih resursa
-            Console.WriteLine("\nResource deletion successful!");
+            Console.WriteLine("\nDistributed resource station deletion successful!");
 
         }
 

@@ -204,6 +204,8 @@ namespace DERServer.Services
                 context.SaveChanges();
 
                 context.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('DERResources', RESEED, 0)");
+				context.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('Statistics', RESEED, 0)");
+
             }
         }
 
