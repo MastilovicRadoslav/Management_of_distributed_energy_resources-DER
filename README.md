@@ -62,4 +62,6 @@ Ovaj projekat je licenciran pod MIT licencom.
 ## DEMO
 U nastavku se nalazi demo snimak testiranja aplikacije sa SSMS bazom podataka (sa XML je isto samo se ID dodatno unosi) koji prikazuje kako funkcionišu različite operacije u **UserClient** i **DERClient** konzolama sve to povezano sa **DERServer**:
 
+[YouTube Video](https://youtu.be/FQnMni_BQYI)
+
 
