@@ -11,7 +11,6 @@ namespace DERServer.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class DERService : IDERService
     {
-        //private readonly Dictionary<int, DERResource> resources = new Dictionary<int, DERResource>(); // Skladišti sve registrovane resurse koristeći ID kao ključ.
 
         private readonly Statistics statistics = new Statistics(); // Čuva statistiku, uključujući ukupnu proizvedenu energiju.
 
@@ -20,7 +19,7 @@ namespace DERServer.Services
         public DERService()
         {
             // Postavite putanju do XML datoteke
-            _xmlDataAccess = new XmlDataAccess("C:\\Users\\Lenovo\\Documents\\GitHub\\Management_of_distributed_energy_resources-DER\\SolutionWith_XML\\Results\\resource.xml");
+            _xmlDataAccess = new XmlDataAccess("C:\Users\Lenovo\Documents\GitHub\Management_of_distributed_energy_resources-DER\SolutionWith_XML\Results\\resource.xml");
         }
 
         public string RegisterResource(int resourceId)
@@ -44,9 +43,17 @@ namespace DERServer.Services
                 _xmlDataAccess.SaveResources(existingResources, statistics); // Sačuvajte izmene nazad u XML
 
                 // Ispis na konzolu
-                Console.WriteLine($"Resource with ID {resourceId} is now active on server.");
-                Console.WriteLine($"Start Time: {resource.StartTime}");
-                Console.WriteLine($"Active Energy: {resource.Power} kW");
+                Console.WriteLine("\n------------------------------------------------------------");
+                Console.WriteLine("                   Resource Activation Summary              ");
+                Console.WriteLine("------------------------------------------------------------");
+                Console.WriteLine($"Resource ID           : {resourceId}");
+                Console.WriteLine($"Name                  : {resource.Name}");
+                Console.WriteLine($"Power                 : {resource.Power} kW");
+                Console.WriteLine($"Activation Start Time : {resource.StartTime:dd-MM-yyyy HH:mm:ss}");
+                Console.WriteLine("------------------------------------------------------------");
+                Console.WriteLine("Current Statistics:");
+                Console.WriteLine($"Total Active Power    : {statistics.TotalActivePower} kW");
+                Console.WriteLine("------------------------------------------------------------\n");
 
                 return $"Resource with ID {resourceId} is now active.\nPower: {resource.Power} kW";
             }
@@ -89,10 +96,21 @@ namespace DERServer.Services
                 _xmlDataAccess.SaveResources(existingResources, statistics); // Sačuvajte izmene nazad u XML
 
                 // Ispis na serveru za deaktivaciju resursa
-                Console.WriteLine($"Resource with ID {resourceId} has been deactivated on server.");
-                Console.WriteLine($"End Time: {resource.EndTime}");
-                Console.WriteLine($"Active Time: {resource.ActiveTime} seconds");
-                Console.WriteLine($"Produced Energy: {producedEnergy} kWh");
+                Console.WriteLine("------------------------------------------------------------");
+                Console.WriteLine("                   Resource Deactivation Summary            ");
+                Console.WriteLine("------------------------------------------------------------");
+                Console.WriteLine($"Resource ID           : {resourceId}");
+                Console.WriteLine($"Name                  : {resource.Name}");
+                Console.WriteLine($"Power                 : {resource.Power} kW");
+                Console.WriteLine($"Start Time            : {(resource.StartTime != DateTime.MinValue ? resource.StartTime.ToString("dd-MM-yyyy HH:mm:ss") : "N/A")}");
+                Console.WriteLine($"End Time              : {(resource.EndTime != DateTime.MinValue ? resource.EndTime.ToString("dd-MM-yyyy HH:mm:ss") : "N/A")}");
+                Console.WriteLine($"Active Duration       : {resource.ActiveTime} seconds");
+                Console.WriteLine("------------------------------------------------------------");
+                Console.WriteLine("Statistics Update:");
+                Console.WriteLine($"Total Active Power    : {statistics.TotalActivePower} kW");
+                Console.WriteLine($"Total Produced Energy : {statistics.TotalProducedEnergy} kWh");
+                Console.WriteLine("------------------------------------------------------------\n");
+
 
                 return $"Resource with ID {resourceId} has stopped.\nActive time: {resource.ActiveTime} seconds.\nProduced energy: {producedEnergy} kWh.";
             }
@@ -116,8 +134,6 @@ namespace DERServer.Services
                 // Dodajte resurs u XML datoteku
                 existingResources.Add(resource);
                 _xmlDataAccess.SaveResources(existingResources, statistics); // Sačuvajte izmene nazad u XML
-
-                Console.WriteLine($"Resource added: ID = {resource.Id}, Name = {resource.Name}, Power = {resource.Power} kW");
             }
             else
             {

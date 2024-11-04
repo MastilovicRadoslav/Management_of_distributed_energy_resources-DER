@@ -1,10 +1,11 @@
-﻿using Common.Interfaces;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using UserClient.Services;
 using Common.Models;
-using DERClient.Services;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
 using System.Collections.Generic;
+using Common.Interfaces;
+using DERClient.Services;
+using System;
 
 namespace DERManagementSystem.Tests
 {

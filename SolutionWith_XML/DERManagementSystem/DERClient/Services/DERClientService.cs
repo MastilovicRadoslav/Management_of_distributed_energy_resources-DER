@@ -33,25 +33,30 @@ namespace DERClient.Services
 
             if (resourceInfo != null)
             {
-                Console.WriteLine("\n--- Resource Information ---");
-                Console.WriteLine($"ID: {resourceInfo.Id}");
-                Console.WriteLine($"Name: {resourceInfo.Name}");
-                Console.WriteLine($"Power: {resourceInfo.Power} kW");
-                Console.WriteLine($"Status: {(resourceInfo.IsActive ? "Active" : "Inactive")}");
+                Console.WriteLine("------------------------------------------------------------");
+                Console.WriteLine("                     Resource Information                   ");
+                Console.WriteLine("------------------------------------------------------------");
+                Console.WriteLine($"Resource ID           : {resourceInfo.Id}");
+                Console.WriteLine($"Name                  : {resourceInfo.Name}");
+                Console.WriteLine($"Power                 : {resourceInfo.Power} kW");
+                Console.WriteLine($"Status                : {(resourceInfo.IsActive ? "Active" : "Inactive")}");
+                Console.WriteLine("------------------------------------------------------------");
 
                 // Prikaži raspored samo ako postoji
                 if (schedule != null)
                 {
-                    Console.WriteLine("\n--- Schedule Information ---");
-                    Console.WriteLine($"Start Time: {schedule.StartTime}");
-                    Console.WriteLine($"End Time: {schedule.EndTime}");
-                    Console.WriteLine($"Active Time: {schedule.ActiveTime} seconds");
+                    Console.WriteLine("                     Schedule Information                   ");
+                    Console.WriteLine("------------------------------------------------------------");
+                    Console.WriteLine($"Start Time            : {(schedule.StartTime != DateTime.MinValue ? schedule.StartTime.ToString("dd-MM-yyyy HH:mm:ss") : "N/A")}");
+                    Console.WriteLine($"End Time              : {(schedule.EndTime != DateTime.MinValue ? schedule.EndTime.ToString("dd-MM-yyyy HH:mm:ss") : "N/A")}");
+                    Console.WriteLine($"Active Duration       : {schedule.ActiveTime} seconds");
                 }
                 else
                 {
                     Console.WriteLine("No schedule information available for this resource.");
                 }
 
+                Console.WriteLine("------------------------------------------------------------\n");
                 return true;
             }
             else
@@ -59,6 +64,7 @@ namespace DERClient.Services
                 Console.WriteLine("No information found for the specified resource.");
                 return false;
             }
+
         }
 
 

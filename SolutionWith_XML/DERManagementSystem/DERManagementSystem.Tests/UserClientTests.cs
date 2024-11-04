@@ -3,6 +3,7 @@ using Common.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
+using System.IO;
 using UserClient.Services;
 
 namespace DERManagementSystem.Tests

@@ -28,7 +28,7 @@ namespace UserClient
                     case "2":
                         Console.Write("Enter type 'DA': ");
                         var filePath = Console.ReadLine();
-                        filePath = "C:\\Users\\Lenovo\\Documents\\GitHub\\Management_of_distributed_energy_resources-DER\\SolutionWith_XML\\Resources\\resources.txt";
+                        filePath = "C:\Users\Lenovo\Documents\GitHub\Management_of_distributed_energy_resources-DER\SolutionWith_XML\Resources\\resources.txt";
                         userService.LoadAndRegisterResourcesFromFile(filePath);
                         break;
                     case "3":
