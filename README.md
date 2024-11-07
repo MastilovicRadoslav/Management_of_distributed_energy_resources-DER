@@ -1,6 +1,6 @@
 # Upravljanje distribuiranim energijama (DER)
 
-**DERManagementSolution** je sveobuhvatan sistem dizajniran za upravljanje distribuiranim energijama (DER). Ovo rešenje se sastoji od nekoliko projekata, od kojih svaki odgovara za različite aspekte aplikacije.
+**DERManagementSolution** je sveobuhvatan sistem dizajniran za upravljanje distribuiranim energijama (DER). Ovo rješenje se sastoji od nekoliko projekata, od kojih svaki odgovara za različite aspekte aplikacije.
 
 ## Sadržaj
 - **Projekti**
@@ -16,22 +16,22 @@
 ## Projekti
 
 ### Opis komunikacije
-Komunikacija između servera i klijenata omogućena je pomoću WCF (Windows Communication Foundation) komunikacije, koja pruža fleksibilan model komunikacije između klijenta i servera. Ovaj model podržava različite protokole, bezbednosne opcije i načine razmene podataka. WCF je izabran zbog svoje široke primene u raznim projektima na ovom GitHub profilu.
+Komunikacija između servera i klijenata omogućena je pomoću WCF (Windows Communication Foundation) komunikacije, koja pruža fleksibilan model komunikacije između klijenta i servera. Ovaj model podržava različite protokole, bezbjednosne opcije i načine razmjene podataka. WCF je izabran zbog svoje široke primjene kao i to što je ga autor koristio na raznim projektima na ovom GitHub profilu i fakultetu.
 
 ### Common
-Projekat **Common** sadrži deljene modele i interfejse koji se koriste u drugim projektima unutar rešenja. Definiše strukture podataka za resurse, rasporede i statistiku. Takođe sadrži folder **Data**, u kome se nalazi klasa za operacije sa XML bazom podataka.
+Projekat **Common** sadrži dijeljene modele (folder **Models**) i interfejse (folder **Interfaces**) koji se koriste u drugim projektima unutar rješenja. Definiše strukture podataka za resurse, rasporede i statistiku. Takođe sadrži folder **Data**, u kome se nalazi klasa za operacije sa XML bazom podataka.
 
 ### DERServer
-Projekat **DERServer** implementira funkcionalnost na strani servera za upravljanje resursima. Izlaže usluge za registraciju, deaktivaciju i praćenje resursa. Takođe upravlja skladištem podataka o resursima, podržavajući rad sa XML i SSMS bazama podataka. U slučaju XML baze, ID resursa se generiše ručno kroz konzolu, dok kod SSMS baze podataka ID automatski generiše baza.
+Projekat **DERServer** implementira funkcionalnost na strani servera za upravljanje resursima (folder **Services**). Izlaže usluge za registraciju, deaktivaciju i praćenje resursa. Takođe upravlja skladištem podataka o resursima, podržavajući rad sa XML i SSMS bazama podataka. U slučaju XML baze, ID resursa se generiše ručno kroz konzolu, dok kod SSMS baze podataka ID automatski generiše baza.
 
 ### DERClient
-Projekat **DERClient** pruža klijentsku logiku za interakciju sa **DERServer**. Omogućava korisnicima da aktiviraju i deaktiviraju resurse, kao i da preuzmu informacije o traženim resursima i njihovim rasporedima.
+Projekat **DERClient** pruža klijentsku logiku za interakciju sa **DERServer**. Omogućava korisnicima da aktiviraju i deaktiviraju resurse (folder **Services**), kao i da preuzmu informacije o traženim resursima i njihovim rasporedima (autor posjeduje i rješenje u obliku automatskog podesavanja pokretanja i simulacije DERClient projekta (distribuiranog resursa) ali je zbog lakšeg pregleda i testiranja se odlucio na ovaj način).
 
 ### UserClient
-Projekat **UserClient** služi kao korisnički interfejs i omogućava različite operacije nad resursima, kao i kontrolu interakcije sa korisnicima.
+Projekat **UserClient** služi kao korisnički interfejs i omogućava različite operacije nad resursima (folder **Services**), kao i kontrolu interakcije sa korisnicima.
 
 ### DERManagementSystem.Tests
-Projekat **DERManagementSystem.Tests** sadrži jedinične testove za servise i klijentske komponente rešenja. Koristi MSTest i Moq za validaciju funkcionalnosti i osiguranje pouzdanosti sistema.
+Projekat **DERManagementSystem.Tests** sadrži jedinične testove za servise i klijentske komponente rešenja. Koristi MSTest i Moq za validaciju funkcionalnosti i osiguranje pouzdanosti sistema, ovo je na osnovu predmeta na fakultetu na kojem je bila implementacija testova, repozitorijum **Elementi_razvoja_softvera - ERS**
 
 ## Kako početi
 
@@ -41,11 +41,11 @@ Projekat **DERManagementSystem.Tests** sadrži jedinične testove za servise i k
 
 ### Pokretanje rešenja
 1. Otvorite rešenje u Visual Studio-u.
-2. Postavite **DERServer** kao projekat koji se prvi pokreće, a zatim pokrenite **DERClient** i **UserClient**.
+2. Postavite **DERServer** kao projekat koji se prvi pokreće, a zatim pokrenite **UserClient** i **DerClient**.
 3. Pokrenite projekte na opciji "Start".
-4. U konzoli **UserClient** imate ponuđene opcije za dodavanje resursa (preko konzole ili iz fajla), prikazivanje svih informacija o resursima (uključujući aktivnu snagu i proizvedenu energiju), kao i brisanje svih dosadašnjih resursa iz baze.
-5. U konzoli **DERClient** unesite ID resursa koji ste dodali preko **UserClient**. Ako resurs postoji, biće prikazane informacije o njemu i njegovom rasporedu. Takođe, imate mogućnost aktivacije i deaktivacije resursa, uz ispis svih potrebnih informacija na **DERServer** kao i na ostalim projektima.
-6. Kada deaktivirate resurse iz **DERClient**, informacije u **UserClient** prikazaće ukupnu proizvedenu energiju na osnovu vremena aktivacije i jačine resursa takodje sve informacije ce biti prikazane i o aktivnoj snazi.
+4. U konzoli **UserClient** imate ponuđene opcije za dodavanje resursa (preko konzole ili iz fajla), prikazivanje svih informacija o resursima (uključujući aktivnu snagu i proizvedenu energiju), kao i brisanje svih dosadašnjih resursa iz baze (XML ili SSMS).
+5. U konzoli **DERClient** unesite ID resursa koji ste dodali preko **UserClient**. Ako resurs postoji, biće prikazane informacije o njemu i njegovom rasporedu. Takođe, imate mogućnost aktivacije i deaktivacije resursa, uz ispis svih potrebnih informacija na **DERServer** kao i na ostalim projektima. Što se tiče automatizovanog rešenja tu se distribuirani resurs random izabere i simulira se njegovo pokretanje kao i zaustavljanje uz odgovarajuće ispise bez toga da se manuelno bira resurs.
+6. Kada deaktivirate resurse iz **DERClient** (nije neophodno deaktivirati sve se vidi u real-time vremenu i dok rade i dok ne rade), informacije u **UserClient** prikazaće **ukupnu kolicinu energije (kWh) koju su resursi proizveli od pocetka rada servera - računa se sabiranjem količina energija koji se svaki resurs proizveo na osnovu svog vremena rada** i **ukupnu snagu (kW) trenutno angazovanih resursa - računa se zbirom snaga savkog resursa** kao i sve ostale informacije koje će biti prikazane na konzoli
    
 ### Napomena
 - U slučaju korišćenja **XML baze podataka**, ID resursa se unosi ručno kroz konzolu prilikom registracije resursa.
