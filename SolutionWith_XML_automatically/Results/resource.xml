@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Resources>
+  <Resource>
+    <ResourceID>1</ResourceID>
+    <Name>Test Resource</Name>
+    <Power>50</Power>
+    <Status>Inactive</Status>
+    <StartTime>2024-11-07T15:06:53.6204309+01:00</StartTime>
+    <EndTime>2024-11-07T15:06:53.6364322+01:00</EndTime>
+    <ActiveTime>0.0160013</ActiveTime>
+  </Resource>
+  <TotalActivePower>0</TotalActivePower>
+  <TotalProducedEnergy>0.00022224027777777776</TotalProducedEnergy>
+</Resources>
